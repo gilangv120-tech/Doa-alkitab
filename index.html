@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5b3cc4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+<title>Doa & Alkitab</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f3fb;color:#222}
+.app{max-width:480px;margin:auto;min-height:100vh;background:#fff;position:relative;padding-bottom:78px}
+header{background:linear-gradient(135deg,#5b3cc4,#8067e8);color:white;padding:28px 22px 24px;border-radius:0 0 28px 28px}
+h1{margin:0 0 6px;font-size:28px}header p{margin:0;opacity:.9}
+.page{display:none;padding:20px}.page.active{display:block}
+.card{background:white;border-radius:18px;padding:18px;margin-bottom:15px;box-shadow:0 4px 16px #0000000d;border:1px solid #eee}
+.hero{background:linear-gradient(135deg,#eee8ff,#faf9ff);border:0}
+.label{font-size:13px;color:#6651b9;font-weight:bold;text-transform:uppercase}
+.verse{font-size:19px;line-height:1.55;font-weight:600;margin:10px 0}
+.ref{color:#6651b9;font-weight:bold}
+button{border:0;border-radius:12px;padding:11px 15px;background:#5b3cc4;color:white;font-weight:bold;cursor:pointer}
+.secondary{background:#eeeaff;color:#5039ad}.danger{background:#ffe9e9;color:#a33}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);height:72px;background:white;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:8px 5px;z-index:5}
+nav button{background:none;color:#777;padding:7px 8px;font-size:12px}.navicon{display:block;font-size:22px;margin-bottom:2px}.activeNav{color:#5b3cc4!important}
+textarea{width:100%;min-height:100px;border:1px solid #ddd;border-radius:12px;padding:12px;font:inherit}
+input{width:100%;padding:13px;border:1px solid #ddd;border-radius:12px;margin-bottom:12px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.small{font-size:13px;color:#777;line-height:1.5}
+.dark body{}
+body.dark{background:#121118;color:#eee}.dark .app,.dark .card,.dark nav{background:#1d1b24}.dark .hero{background:#28233b}.dark input,.dark textarea{background:#282630;color:#eee;border-color:#444}.dark .secondary{background:#39314f;color:#ddd}.dark .small{color:#aaa}.dark nav{border-color:#333}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>🙏 Doa & Alkitab</h1>
+<p>Tempat untuk berdoa, membaca firman, dan menguatkan iman.</p>
+</header>
+
+<section id="home" class="page active">
+<div class="card hero">
+<div class="label">Ayat Hari Ini</div>
+<div class="verse">“Tuhan adalah gembalaku, takkan kekurangan aku.”</div>
+<div class="ref">Mazmur 23:1</div>
+</div>
+<div class="card">
+<h2>Selamat datang</h2>
+<p class="small">Luangkan waktu untuk berdoa dan membaca firman Tuhan setiap hari.</p>
+<button onclick="showPage('doa')">Mulai Berdoa 🙏</button>
+</div>
+<div class="card">
+<h3>Doa singkat</h3>
+<p>“Tuhan, tuntunlah aku hari ini, berikan aku hikmat, kekuatan, dan hati yang baik. Amin.”</p>
+</div>
+</section>
+
+<section id="doa" class="page">
+<h2>🙏 Doa</h2>
+<div class="card"><h3>Doa Pagi</h3><p>Ya Tuhan, terima kasih untuk hari yang baru. Bimbing langkahku dan jauhkan aku dari hal yang tidak baik. Berikan aku hikmat dan kekuatan untuk menjalani hari ini. Amin.</p><button onclick="savePrayer('Doa Pagi')">♡ Simpan</button></div>
+<div class="card"><h3>Doa Sebelum Belajar</h3><p>Tuhan, berikan aku pengertian dan konsentrasi saat belajar. Tolong aku agar rajin dan menggunakan pengetahuan untuk hal yang baik. Amin.</p><button onclick="savePrayer('Doa Sebelum Belajar')">♡ Simpan</button></div>
+<div class="card"><h3>Doa Malam</h3><p>Tuhan, terima kasih untuk penyertaan-Mu hari ini. Ampuni kesalahanku dan berikan aku istirahat yang tenang. Sertai aku dan keluargaku malam ini. Amin.</p><button onclick="savePrayer('Doa Malam')">♡ Simpan</button></div>
+<div class="card"><h3>Doa Pribadi</h3><textarea id="myPrayer" placeholder="Tulis doamu di sini..."></textarea><button onclick="saveMyPrayer()">Simpan Doa</button></div>
+</section>
+
+<section id="ayat" class="page">
+<h2>📖 Ayat</h2>
+<input id="search" placeholder="Cari ayat, misalnya: kekuatan" oninput="searchVerse()">
+<div id="verses"></div>
+</section>
+
+<section id="fav" class="page">
+<h2>❤️ Favorit</h2><div id="favorites"></div>
+</section>
+
+<section id="settings" class="page">
+<h2>⚙️ Pengaturan</h2>
+<div class="card item"><div><b>Mode malam</b><div class="small">Ubah tampilan agar lebih nyaman.</div></div><button class="secondary" onclick="toggleDark()">Ganti</button></div>
+<div class="card"><h3>Tentang aplikasi</h3><p class="small">Doa & Alkitab adalah prototipe sederhana untuk membantu menyediakan ruang doa dan renungan pribadi.</p></div>
+</section>
+
+<nav>
+<button onclick="showPage('home')" id="n-home" class="activeNav"><span class="navicon">🏠</span>Beranda</button>
+<button onclick="showPage('doa')" id="n-doa"><span class="navicon">🙏</span>Doa</button>
+<button onclick="showPage('ayat')" id="n-ayat"><span class="navicon">📖</span>Ayat</button>
+<button onclick="showPage('fav')" id="n-fav"><span class="navicon">❤️</span>Favorit</button>
+<button onclick="showPage('settings')" id="n-settings"><span class="navicon">⚙️</span>Setelan</button>
+</nav>
+</div>
+
+<script>
+const data=[
+["Mazmur 23:1","Tuhan adalah gembalaku, takkan kekurangan aku.","penghiburan"],
+["Filipi 4:13","Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku.","kekuatan"],
+["Yeremia 29:11","Sebab Aku ini mengetahui rancangan-rancangan apa yang ada pada-Ku mengenai kamu.","harapan"],
+["Amsal 3:5","Percayalah kepada Tuhan dengan segenap hatimu.","percaya"],
+["Yosua 1:9","Kuatkan dan teguhkanlah hatimu. Janganlah takut dan janganlah kecut.","keberanian"]
+];
+function showPage(id){
+document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(x=>x.classList.remove('activeNav'));
+document.getElementById('n-'+id).classList.add('activeNav');
+if(id==='ayat')renderVerses(data); if(id==='fav')renderFav();
+scrollTo(0,0);
+}
+function renderVerses(arr){
+document.getElementById('verses').innerHTML=arr.map((v,i)=>`<div class="card"><div class="verse">“${v[1]}”</div><div class="ref">${v[0]}</div><p class="small">Topik: ${v[2]}</p><button onclick="favVerse(${i})">♡ Favorit</button></div>`).join('')||'<p>Ayat tidak ditemukan.</p>';
+}
+function searchVerse(){
+let q=document.getElementById('search').value.toLowerCase();
+renderVerses(data.filter(v=>v.join(' ').toLowerCase().includes(q)));
+}
+function getFav(){return JSON.parse(localStorage.getItem('fav')||'[]')}
+function favVerse(i){let f=getFav(); if(!f.includes(i))f.push(i); localStorage.setItem('fav',JSON.stringify(f)); alert('Ayat disimpan ke Favorit ❤️')}
+function savePrayer(n){let f=JSON.parse(localStorage.getItem('prayers')||'[]');if(!f.includes(n))f.push(n);localStorage.setItem('prayers',JSON.stringify(f));alert('Doa disimpan ❤️')}
+function saveMyPrayer(){let t=document.getElementById('myPrayer').value.trim();if(t){let f=JSON.parse(localStorage.getItem('myPrayers')||'[]');f.push(t);localStorage.setItem('myPrayers',JSON.stringify(f));document.getElementById('myPrayer').value='';alert('Doa pribadimu disimpan ❤️')}}
+function saveTheme(){localStorage.setItem('dark',document.body.classList.contains('dark'))}
+function toggleDark(){document.body.classList.toggle('dark');saveTheme()}
+function renderFav(){
+let f=getFav(), prayers=JSON.parse(localStorage.getItem('prayers')||'[]'), mine=JSON.parse(localStorage.getItem('myPrayers')||'[]');
+let out=f.map(i=>`<div class="card"><div class="verse">“${data[i][1]}”</div><div class="ref">${data[i][0]}</div></div>`).join('');
+out+=prayers.map(x=>`<div class="card"><b>🙏 ${x}</b><p class="small">Doa tersimpan</p></div>`).join('');
+out+=mine.map((x,i)=>`<div class="card"><b>🙏 Doa Pribadi</b><p>${x}</p></div>`).join('');
+document.getElementById('favorites').innerHTML=out||'<div class="card"><p>Belum ada favorit. Simpan ayat atau doa yang kamu sukai.</p></div>';
+}
+if(localStorage.getItem('dark')==='true')document.body.classList.add('dark');
+renderVerses(data);
+</script>
+</body>
+</html>
